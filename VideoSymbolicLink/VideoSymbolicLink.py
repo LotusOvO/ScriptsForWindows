@@ -68,7 +68,7 @@ if __name__ == "__main__":
                         help="the repetition number (default: 1). eg. [-r 2] --> E01, E01, E02...")
     parser.add_argument('-e', '--exclude',
                         action="extend",
-                        nargs="+",
+                        nargs="*",
                         type=str,
                         help="the suffix need to exclude. eg. [-e '7z' 'rar']")
     args = parser.parse_args()
