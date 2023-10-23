@@ -1,9 +1,11 @@
 import os
 import shutil
 import argparse
+import re
 
 
-def make_video_link(src_path, dst_path="./SymbolicLink", copy_small_file_flag=True, exclude_suffix=None):
+def make_video_link(src_path, dst_path="./SymbolicLink", copy_small_file_flag=True, exclude_suffix=None,
+                    small_file_size=100 * 1024):
     if not os.path.exists(dst_path):
         os.mkdir(dst_path)
     elif dst_path == "./SymbolicLink":
@@ -14,14 +16,10 @@ def make_video_link(src_path, dst_path="./SymbolicLink", copy_small_file_flag=Tr
         src = os.path.join(src_path, file)
         if os.path.isfile(src) and not file.endswith(exclude_suffix):
             dst = os.path.join(dst_path, file)
-            mklink(src, dst, copy_small_file_flag)
-
-
-def mklink(src, dst, copy_small_file_flag=True):
-    if copy_small_file_flag and os.path.getsize(src) <= 1024 * 100:
-        shutil.copy(src, dst)
-    else:
-        os.symlink(src, dst)
+            if copy_small_file_flag and os.path.getsize(src) <= small_file_size:
+                shutil.copy(src, dst)
+            else:
+                os.symlink(src, dst)
 
 
 def renamer(src_path, season=1, begin=1, repetition=1):
@@ -38,6 +36,17 @@ def renamer(src_path, season=1, begin=1, repetition=1):
         os.rename(src, dst)
 
 
+def subtitle_renamer(src_path):
+    files = os.listdir(src_path)
+    for file in files:
+        if re.search(r'(?i)tc.ass|cht.ass', file):
+            os.remove(os.path.join(src_path, file))
+        elif re.search(r'(?i)sc.ass', file):
+            os.rename(os.path.join(src_path, file), os.path.join(src_path, re.sub(r'(?i)sc.ass', 'zh.ass', file)))
+        elif re.search(r'(?i)chs.ass', file):
+            os.rename(os.path.join(src_path, file), os.path.join(src_path, re.sub(r'(?i)chs.ass', 'zh.ass', file)))
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Anime make symbolic link and rename"
@@ -50,6 +59,11 @@ if __name__ == "__main__":
                         action="store_false",
                         help="enable the option to create symbolic link for all file (default: copy when file size "
                              "less then 100k).")
+    parser.add_argument('-m', '--minimum',
+                        default=100*1024,
+                        type=int,
+                        help="copy when file size less this number(k) (default: 100). eg. [-m 200] --> copy when file "
+                             "size less then 200k")
     parser.add_argument('-o', '--original',
                         action="store_false",
                         help="enable the option to do not rename."
@@ -71,8 +85,14 @@ if __name__ == "__main__":
                         nargs="*",
                         type=str,
                         help="the suffix need to exclude. eg. [-e '7z' 'rar']")
+    parser.add_argument('-sub', '--subtitle',
+                        action="store_true",
+                        help="enable the option to keep simplified Chinese subtitles and change the suffix. "
+                             "eg. delete 'tc.ass' and rename 'sc.ass' to 'zh.ass'.")
     args = parser.parse_args()
-    make_video_link(args.src, args.dst, args.all, tuple(args.exclude))
+    make_video_link(args.src, args.dst, args.all, tuple(args.exclude), args.minimum)
     if args.original:
         renamer(args.dst, args.season, args.begin, args.repetition)
+    if args.subtitle:
+        subtitle_renamer(args.dst)
     pass
