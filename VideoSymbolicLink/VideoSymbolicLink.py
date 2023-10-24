@@ -41,10 +41,14 @@ def subtitle_renamer(src_path):
     for file in files:
         if re.search(r'(?i)tc.ass|cht.ass', file):
             os.remove(os.path.join(src_path, file))
-        elif re.search(r'(?i)sc.ass', file):
-            os.rename(os.path.join(src_path, file), os.path.join(src_path, re.sub(r'(?i)sc.ass', 'zh.ass', file)))
+        elif re.search(r'(?i)jpsc.ass', file):
+            os.rename(os.path.join(src_path, file), os.path.join(src_path, re.sub(r'(?i)jpsc.ass', 'zh.ass', file)))
+        elif re.search(r'(?i)jpchs.ass', file):
+            os.rename(os.path.join(src_path, file), os.path.join(src_path, re.sub(r'(?i)jpchs.ass', 'zh.ass', file)))
         elif re.search(r'(?i)chs.ass', file):
             os.rename(os.path.join(src_path, file), os.path.join(src_path, re.sub(r'(?i)chs.ass', 'zh.ass', file)))
+        elif re.search(r'(?i)sc.ass', file):
+            os.rename(os.path.join(src_path, file), os.path.join(src_path, re.sub(r'(?i)sc.ass', 'zh.ass', file)))
 
 
 if __name__ == "__main__":
