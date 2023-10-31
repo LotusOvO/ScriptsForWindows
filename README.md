@@ -39,3 +39,21 @@ options:
 ```
 
 为目标文件夹中的文件创建符号链接到目标文件夹并添加(SXXEXX - )前缀。
+
+### MusicScrape
+
+```shell
+usage: MusicScrape.py [-h] [-s] src dst
+
+Music scrape with metadata
+
+positional arguments:
+  src            the source folder.
+  dst            the destination folder(create a new folder if folder is not exist).
+
+options:
+  -h, --help     show this help message and exit
+  -s, --symlink  enable the option to use symbolic link.
+```
+
+根据音乐文件中的元数据为目标文件夹中的音乐文件创建Jellyfin风格的文件结构。
