@@ -2,7 +2,8 @@
 
 #b::{
     CoordMode "Pixel", "Screen"
-    if WinExist("ahk_exe Honeyview.exe"){
+    if WinExist("ahk_exe BandiView.exe"){ ; BandView
+    ; if WinExist("ahk_exe Honeyview.exe"){ ; HoneyView
         WinClose
     }
     else{
@@ -10,7 +11,7 @@
         Run ".\black.png",,, &pid
         WinWait "ahk_pid " pid
         WinMove -2560, 0
-        Sleep 200
+        WinActivate "ahk_pid " pid
         if PixelGetColor(-1280, 1430) !== "0x000000"
             Send "!{Enter}"
         WinActivate(title)
